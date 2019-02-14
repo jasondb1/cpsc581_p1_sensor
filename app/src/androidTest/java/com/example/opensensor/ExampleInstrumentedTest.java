@@ -1,4 +1,4 @@
-package com.example.sensoropen;
+package com.example.opensensor;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.sensoropen", appContext.getPackageName());
+        assertEquals("com.example.opensensor", appContext.getPackageName());
     }
 }

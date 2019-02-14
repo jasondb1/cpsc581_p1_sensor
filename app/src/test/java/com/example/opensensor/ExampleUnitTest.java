@@ -1,4 +1,4 @@
-package com.example.sensoropen;
+package com.example.opensensor;
 
 import org.junit.Test;
 

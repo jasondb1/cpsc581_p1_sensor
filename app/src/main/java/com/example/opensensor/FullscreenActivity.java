@@ -1,4 +1,4 @@
-package com.example.sensoropen;
+package com.example.opensensor;
 
 import android.annotation.SuppressLint;
 import android.support.v7.app.ActionBar;

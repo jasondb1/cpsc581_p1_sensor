@@ -1,10 +1,11 @@
 <resources>
-    <string name="app_name">sensorOpen</string>
+    <string name="app_name">openSensor</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="todo">TODO</string>
-    <string name="todo">TODO</string>
-    <string name="todo">TODO</string>
-    <string name="todo">TODO</string>
+    <string name="eyelidLeft">EyelidLeft</string>
+    <string name="pupilLeft">pupilLeft</string>
+    <string name="eyelidRight">eyelidright</string>
+    <string name="pupilRight">pupilRight</string>
+    <string name="background">background</string>
 </resources>

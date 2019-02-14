@@ -4,73 +4,110 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorPrimaryDark"
+    android:background="#0099cc"
     tools:context=".FullscreenActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:text="@string/dummy_content"
+        android:textColor="#33b5e5"
+        android:textSize="50sp"
+        android:textStyle="bold" />
 
+    <ImageView
+        android:id="@+id/BackgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/background"
+        app:srcCompat="@drawable/bg" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/overlay" />
-
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:orientation="horizontal">
+        android:fitsSystemWindows="true">
 
-        <FrameLayout
-            android:id="@+id/EyeLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/eyess"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="150dp"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/EyelidLeft"
-                android:layout_width="180dp"
-                android:layout_height="90dp"
-                android:contentDescription="@string/todo"
-                tools:srcCompat="@drawable/eyelid_00_white" />
+            <FrameLayout
+                android:id="@+id/EyeLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/PupilLeft"
-                android:layout_width="@android:dimen/thumbnail_height"
-                android:layout_height="88dp"
-                android:contentDescription="@string/todo"
-                app:srcCompat="@drawable/pupil_00_white" />
+                <ImageView
+                    android:id="@+id/EyelidLeft"
+                    android:layout_width="180dp"
+                    android:layout_height="90dp"
+                    android:contentDescription="@string/eyelidLeft"
+                    app:srcCompat="@drawable/eyelid_00_white" />
 
-        </FrameLayout>
+                <ImageView
+                    android:id="@+id/PupilLeft"
+                    android:layout_width="@android:dimen/thumbnail_height"
+                    android:layout_height="88dp"
+                    android:contentDescription="@string/pupilLeft"
+                    app:srcCompat="@drawable/pupil_00_white" />
 
-        <FrameLayout
-            android:id="@+id/EyeRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            </FrameLayout>
 
-            <ImageView
-                android:id="@+id/EyelidRight"
-                android:layout_width="180dp"
-                android:layout_height="90dp"
-                android:contentDescription="@string/todo"
-                android:visibility="visible"
-                tools:srcCompat="@drawable/eyelid_00_white" />
+            <FrameLayout
+                android:id="@+id/EyeRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/PupilRight"
-                android:layout_width="@android:dimen/thumbnail_height"
-                android:layout_height="88dp"
-                android:contentDescription="@string/todo"
-                android:visibility="visible"
-                app:srcCompat="@drawable/pupil_00_white" />
+                <ImageView
+                    android:id="@+id/EyelidRight"
+                    android:layout_width="180dp"
+                    android:layout_height="90dp"
+                    android:contentDescription="@string/eyelidRight"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/eyelid_00_white"
+                    tools:srcCompat="@drawable/eyelid_00_white" />
 
-        </FrameLayout>
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/PupilRight"
+                    android:layout_width="@android:dimen/thumbnail_height"
+                    android:layout_height="88dp"
+                    android:contentDescription="@string/pupilRight"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/pupil_00_white" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fullscreen_content_controls"
+            style="?metaButtonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <Button
+                android:id="@+id/dummy_button"
+                style="?metaButtonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dummy_button" />
+
+        </LinearLayout>
+    </FrameLayout>
 
 </FrameLayout>
