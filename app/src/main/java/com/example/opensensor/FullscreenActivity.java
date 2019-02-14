@@ -7,12 +7,26 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.widget.TextView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenActivity extends AppCompatActivity {
+public class FullscreenActivity extends AppCompatActivity implements SensorEventListener {
+
+    private TextView mDebugText;
+    private TextView mDebugLight;
+    private SensorManager sManager;
+    private Sensor mGyro;
+    private Sensor mAccelerometer;
+    private Sensor mLight;
+
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -73,6 +87,10 @@ public class FullscreenActivity extends AppCompatActivity {
      * system UI. This is to prevent the jarring behavior of controls going away
      * while interacting with activity UI.
      */
+
+
+    //TODO: This will likely be disabled
+
     private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -88,6 +106,18 @@ public class FullscreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_fullscreen);
+
+        //setup sensor manager
+
+        mDebugText = (TextView) findViewById(R.id.debug);
+        mDebugText.setText("Running...");
+        mDebugLight = (TextView) findViewById(R.id.debug_light);
+        mDebugLight.setText("Running...");
+
+        sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mGyro = sManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        mAccelerometer = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mLight = sManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -159,5 +189,83 @@ public class FullscreenActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    /**
+     * Registers mGyro and mLight listener when app is running
+     */
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        //register listeners
+        //sManager.registerListener(this, mGyro, SensorManager.SENSOR_DELAY_NORMAL);
+        sManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        //TODO: explore method Sensor.requestTriggerSensor
+        sManager.registerListener(this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
+
+        }
+
+    /**
+     *  Un-Registers mGyro and mLight listener when app is running
+     */
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+        //unregister listener when app is paused
+        sManager.unregisterListener(this);
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+
+        if (event.sensor == mAccelerometer) {
+
+            //if sensor is unreliable, return void
+            //if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
+            //{
+            //    mDebugText.setText("BAD DATA");
+            //    return;
+            //}
+
+            //else it will output the Roll, Pitch and Yawn values
+            mDebugText.setText("X:"+ Float.toString(event.values[2]) +"\n"+
+                    "Y:"+ Float.toString(event.values[1]) +"\n"+
+                    "Z:"+ Float.toString(event.values[0]));
+        }
+        else if (event.sensor == mGyro) {
+
+            //if sensor is unreliable, return void
+            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
+            {
+                return;
+            }
+
+            //else it will output the Roll, Pitch and Yawn values
+            mDebugText.setText("X:"+ Float.toString(event.values[2]) +"\n"+
+                    "Y:"+ Float.toString(event.values[1]) +"\n"+
+                    "Z:"+ Float.toString(event.values[0]));
+        }
+        else if (event.sensor == mLight) {
+            //if sensor is unreliable, return void
+            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
+            {
+                return;
+            }
+            //else it will output the Roll, Pitch and Yawn values
+            //debugText.setText("X:"+ Float.toString(event.values[0]);
+            mDebugLight.setText("Light:" + Float.toString(event.values[0]));
+        }
+
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }

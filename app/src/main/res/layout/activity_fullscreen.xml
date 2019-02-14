@@ -21,24 +21,42 @@
         android:textSize="50sp"
         android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/BackgroundImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/background"
-        app:srcCompat="@drawable/bg" />
-
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/debug"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="@string/debug" />
+
+        <TextView
+            android:id="@+id/debug_light"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:text="@string/debugLight" />
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <LinearLayout
-            android:id="@+id/eyess"
+        <ImageView
+            android:id="@+id/BackgroundImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="@string/background"
+            app:srcCompat="@drawable/bg" />
+
+        <LinearLayout
+            android:id="@+id/eyes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="150dp"
             android:orientation="horizontal">
@@ -87,7 +105,10 @@
                     app:srcCompat="@drawable/pupil_00_white" />
 
             </FrameLayout>
+
         </LinearLayout>
+
+
 
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
@@ -108,6 +129,8 @@
                 android:text="@string/dummy_button" />
 
         </LinearLayout>
+
+
     </FrameLayout>
 
 </FrameLayout>

@@ -8,4 +8,6 @@
     <string name="eyelidRight">eyelidright</string>
     <string name="pupilRight">pupilRight</string>
     <string name="background">background</string>
+    <string name="debug">debug</string>
+    <string name="debugLight">debug light</string>
 </resources>
