@@ -12,6 +12,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.TextView;
+import android.widget.ImageView;
+import android.util.DisplayMetrics;
+import android.widget.FrameLayout;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -19,13 +22,28 @@ import android.widget.TextView;
  */
 public class FullscreenActivity extends AppCompatActivity implements SensorEventListener {
 
+    /**
+     * class attributes
+     */
+    public static boolean DEBUG = true;
+    public static double PI = 3.1415926;
     private TextView mDebugText;
     private TextView mDebugLight;
     private SensorManager sManager;
     private Sensor mGyro;
     private Sensor mAccelerometer;
+    private Sensor mMagneticField;
     private Sensor mLight;
 
+    private final float[] accelerometerReading = new float[3];
+    private final float[] magnetometerReading = new float[3];
+
+    private final float[] rotationMatrix = new float[9];
+    private final float[] orientationAngles = new float[3];
+
+    private FrameLayout mPupils;
+    private ImageView mEyelidLeft;
+    private ImageView mEyelidRight;
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -89,8 +107,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      */
 
 
-    //TODO: This will likely be disabled
-
+    //TODO: The following will likely be disabled
     private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -101,24 +118,42 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         }
     };
 
+    /**
+     * Activity is created
+     *
+     * This is where most of the setup of listeners etc should be initialized
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_fullscreen);
 
+
+        //bind debugging fields
+        if (DEBUG) {
+            mDebugText = (TextView) findViewById(R.id.debug);
+            mDebugText.setText("Running...");
+            mDebugLight = (TextView) findViewById(R.id.debug_light);
+            mDebugLight.setText("Running...");
+        }
+
+        //bind Pupils and eyelids
+        mPupils = (FrameLayout) findViewById(R.id.pupils);
+        mEyelidLeft = (ImageView) findViewById(R.id.EyelidLeft);
+        mEyelidRight = (ImageView) findViewById(R.id.EyelidRight);
+
         //setup sensor manager
-
-        mDebugText = (TextView) findViewById(R.id.debug);
-        mDebugText.setText("Running...");
-        mDebugLight = (TextView) findViewById(R.id.debug_light);
-        mDebugLight.setText("Running...");
-
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mGyro = sManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         mAccelerometer = sManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mMagneticField = sManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mLight = sManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
+
+        //these were part of the template
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
@@ -195,36 +230,49 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      * Registers mGyro and mLight listener when app is running
      */
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
 
         //register listeners
         //sManager.registerListener(this, mGyro, SensorManager.SENSOR_DELAY_NORMAL);
-        sManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        //TODO: explore method Sensor.requestTriggerSensor
-        sManager.registerListener(this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
+        if (mAccelerometer != null) {
+            sManager.registerListener(this, mAccelerometer,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+        if (mMagneticField != null) {
+            sManager.registerListener(this, mMagneticField,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        if (mLight != null) {
+            sManager.registerListener(this, mLight, SensorManager.SENSOR_DELAY_NORMAL);
 
         }
 
+    }
+
     /**
-     *  Un-Registers mGyro and mLight listener when app is running
+     * Un-Registers mGyro and mLight listener when app is running
      */
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
 
         //unregister listener when app is paused
         sManager.unregisterListener(this);
     }
 
-
+    /**
+     * Process changes when sensor data is changed
+     * @param event
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-
         if (event.sensor == mAccelerometer) {
 
+            // May need this on a real phone
             //if sensor is unreliable, return void
             //if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
             //{
@@ -232,40 +280,154 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             //    return;
             //}
 
-            //else it will output the Roll, Pitch and Yawn values
-            mDebugText.setText("X:"+ Float.toString(event.values[2]) +"\n"+
-                    "Y:"+ Float.toString(event.values[1]) +"\n"+
-                    "Z:"+ Float.toString(event.values[0]));
-        }
-        else if (event.sensor == mGyro) {
+            System.arraycopy(event.values, 0, accelerometerReading,
+                    0, accelerometerReading.length);
+
+            updateOrientationAngles();
+            updatePupils();
+
+            if (DEBUG){
+                mDebugText.setText("Azimuth:" + Float.toString(orientationAngles[0]) + "\n" +
+                        "Pitch:" + Float.toString(orientationAngles[1]) + "\n" +
+                        "Roll:" + Float.toString(orientationAngles[2]));
+
+            }
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                System.arraycopy(event.values, 0, magnetometerReading,
+                        0, magnetometerReading.length);
+
+            updateOrientationAngles();
+            updatePupils();
+
+            if (DEBUG){
+                mDebugText.setText("Azimuth:" + Float.toString(orientationAngles[0]) + "\n" +
+                        "Pitch:" + Float.toString(orientationAngles[1]) + "\n" +
+                        "Roll:" + Float.toString(orientationAngles[2]));
+
+            }
+        } else if (event.sensor == mGyro) {
 
             //if sensor is unreliable, return void
-            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
-            {
+            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
                 return;
             }
 
-            //else it will output the Roll, Pitch and Yawn values
-            mDebugText.setText("X:"+ Float.toString(event.values[2]) +"\n"+
-                    "Y:"+ Float.toString(event.values[1]) +"\n"+
-                    "Z:"+ Float.toString(event.values[0]));
-        }
-        else if (event.sensor == mLight) {
+        } else if (event.sensor == mLight) {
             //if sensor is unreliable, return void
-            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
-            {
+            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
                 return;
             }
-            //else it will output the Roll, Pitch and Yawn values
-            //debugText.setText("X:"+ Float.toString(event.values[0]);
-            mDebugLight.setText("Light:" + Float.toString(event.values[0]));
+
+            if (DEBUG) {
+                mDebugLight.setText("Light:" + Float.toString(event.values[0]));
+            }
+
+            //TODO: Animate eye closing
+            if (event.values[0] < 100){
+                closeEyes();
+            } else {
+                openEyes();
+            }
+
+
         }
-
-
     }
 
+    /**
+     * Update the orientation angles, so pitch and roll can be read directly
+     * instead of calculated
+     */
+    public void updateOrientationAngles() {
+        SensorManager.getRotationMatrix(rotationMatrix, null,
+                accelerometerReading, magnetometerReading);
+
+        SensorManager.getOrientation(rotationMatrix, orientationAngles);
+    }
+
+    /**
+     * (NOT USED) need to keep stub for interface
+     * @param sensor
+     * @param accuracy
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    /**
+     * Moves the pupils left/right up/down
+     */
+    private void updatePupils(){
+
+        //set angle boundaries
+        double LEFTBOUND = -PI / 6;
+        double RIGHTBOUND = PI / 6;
+        double UPPERBOUND = -PI / 2; //straight vertical
+        double LOWERBOUND = PI / 6;
+
+        //this is used to convert to screen dp
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        float MOVE_H_FACTOR = 65.0f; //multiply the angle by this factor so pupil movement = roll * MOVE_FACTOR - This affects how far the eye moves horizontally
+        float MOVE_V_FACTOR = 11.0f; //multiply the angle by this factor so pupil movement = roll * MOVE_FACTOR - This affects how far the eye moves vertically
+        int offsetX = 5;    //Default Horizontal position of eyes without any movement
+        int offsetY = 95;  //Default Vertical position of eyes without any movement
+        float offsetAngleY = (float) (PI / 3); //in Radians - Used to adjust the angle at which the eyes are centered vertically
+
+        float amount = 0.0f;
+        int pixels = 0;
+
+        //Move eyes horizontally
+        if (orientationAngles[2] < LEFTBOUND) {
+            amount = (float) (offsetX + (MOVE_H_FACTOR * LEFTBOUND));
+
+        } else if (orientationAngles[2] > RIGHTBOUND) {
+            amount = (float) (offsetX + (MOVE_H_FACTOR * RIGHTBOUND));
+        } else {
+            amount = (MOVE_H_FACTOR * orientationAngles[2]) + offsetX;
+        }
+        amount = metrics.density * amount;
+        pixels = (int) (amount + 0.5f);
+        mPupils.setTranslationX(pixels);
+
+
+        //Move Eyes Vertically
+        if (orientationAngles[1] < UPPERBOUND) {
+            amount = (float) (offsetY + (MOVE_V_FACTOR * UPPERBOUND));
+
+        } else if (orientationAngles[1] > LOWERBOUND) {
+            amount = (float) (offsetY + (MOVE_V_FACTOR * LOWERBOUND));
+        } else {
+            amount = (MOVE_V_FACTOR * (orientationAngles[1] + offsetAngleY) ) + offsetY;
+        }
+        amount = metrics.density * amount;
+        pixels = (int) (amount + 0.5f);
+        mPupils.setTranslationY(pixels);
+    }
+
+    /**
+     * Closes the eyes
+     */
+    private void closeEyes(){
+
+        //TODO: Close eyes based on time
+
+        mEyelidLeft.setImageResource(R.drawable.eyelid_07);
+        mEyelidRight.setImageResource(R.drawable.eyelid_07);
+
+
+    }
+
+    /**
+     * Closes the eyes
+     */
+    private void openEyes(){
+
+        //TODO: open eyes based on time
+
+        mEyelidLeft.setImageResource(R.drawable.eyelid_00);
+        mEyelidRight.setImageResource(R.drawable.eyelid_00);
+
+
+    }
+
 }

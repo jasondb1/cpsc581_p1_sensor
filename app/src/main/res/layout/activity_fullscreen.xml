@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="#0066a0"
     tools:context=".FullscreenActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
@@ -19,7 +19,8 @@
         android:text="@string/dummy_content"
         android:textColor="#33b5e5"
         android:textSize="50sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -32,13 +33,15 @@
             android:id="@+id/debug"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:text="@string/debug" />
+            android:text="@string/debug"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/debug_light"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:text="@string/debugLight" />
+            android:text="@string/debugLight"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <FrameLayout
@@ -51,63 +54,57 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/background"
+            android:visibility="invisible"
             app:srcCompat="@drawable/bg" />
 
-        <LinearLayout
-            android:id="@+id/eyes"
+        <FrameLayout
+            android:id="@+id/pupils"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:translationX="15dp"
+            android:translationY="100dp">
+
+            <ImageView
+                android:id="@+id/PupilLeft"
+                android:layout_width="190dp"
+                android:layout_height="88dp"
+                android:contentDescription="@string/pupilLeft"
+                app:srcCompat="@drawable/pupil_00_white" />
+
+            <ImageView
+                android:id="@+id/PupilRight"
+                android:layout_width="@android:dimen/thumbnail_height"
+                android:layout_height="88dp"
+                android:contentDescription="@string/pupilRight"
+                android:translationX="200dp"
+                android:visibility="visible"
+                app:srcCompat="@drawable/pupil_00_white" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/eyelids"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="150dp"
-            android:orientation="horizontal">
+            android:translationX="15dp"
+            android:translationY="100dp">
 
-            <FrameLayout
-                android:id="@+id/EyeLeft"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/EyelidLeft"
+                android:layout_width="180dp"
+                android:layout_height="90dp"
+                android:contentDescription="@string/eyelidLeft"
+                app:srcCompat="@drawable/eyelid_00" />
 
-                <ImageView
-                    android:id="@+id/EyelidLeft"
-                    android:layout_width="180dp"
-                    android:layout_height="90dp"
-                    android:contentDescription="@string/eyelidLeft"
-                    app:srcCompat="@drawable/eyelid_00_white" />
-
-                <ImageView
-                    android:id="@+id/PupilLeft"
-                    android:layout_width="@android:dimen/thumbnail_height"
-                    android:layout_height="88dp"
-                    android:contentDescription="@string/pupilLeft"
-                    app:srcCompat="@drawable/pupil_00_white" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/EyeRight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/EyelidRight"
-                    android:layout_width="180dp"
-                    android:layout_height="90dp"
-                    android:contentDescription="@string/eyelidRight"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/eyelid_00_white"
-                    tools:srcCompat="@drawable/eyelid_00_white" />
-
-                <ImageView
-                    android:id="@+id/PupilRight"
-                    android:layout_width="@android:dimen/thumbnail_height"
-                    android:layout_height="88dp"
-                    android:contentDescription="@string/pupilRight"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/pupil_00_white" />
-
-            </FrameLayout>
-
-        </LinearLayout>
-
+            <ImageView
+                android:id="@+id/EyelidRight"
+                android:layout_width="180dp"
+                android:layout_height="90dp"
+                android:contentDescription="@string/eyelidRight"
+                android:translationX="200dp"
+                android:visibility="visible"
+                app:srcCompat="@drawable/eyelid_00"
+                tools:srcCompat="@drawable/eyelid_00_white" />
+        </FrameLayout>
 
 
         <LinearLayout
