@@ -326,9 +326,9 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             }
 
             //TODO: Animate eye closing
-            if (event.values[0] < 100 && (eyeStatus != EyeStatus.CLOSING) ){
+            if (event.values[0] < 30 && (eyeStatus != EyeStatus.CLOSING) ){
                 closeEyes();
-            } else if (event.values[0] > 1000 && (eyeStatus != EyeStatus.OPENING)) {
+            } else if (event.values[0] > 300 && (eyeStatus != EyeStatus.OPENING)) {
                 openEyes();
             }
 
