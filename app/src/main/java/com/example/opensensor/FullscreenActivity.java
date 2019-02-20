@@ -29,7 +29,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     /**
      * class attributes
      */
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
     public static double PI = 3.1415926;
     public static boolean eyeOpen = true;
     private TextView mDebugText;
@@ -163,9 +163,9 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         //bind debugging fields
         if (DEBUG) {
-            mDebugText = (TextView) findViewById(R.id.debug);
+            //mDebugText = (TextView) findViewById(R.id.debug);
             mDebugText.setText("Running...");
-            mDebugLight = (TextView) findViewById(R.id.debug_light);
+            //mDebugLight = (TextView) findViewById(R.id.debug_light);
             mDebugLight.setText("Running...");
         }
 
