@@ -1,6 +1,7 @@
 package com.example.opensensor;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private Sensor mAccelerometer;
     private Sensor mMagneticField;
     private Sensor mLight;
+    private EyeStatus eyeStatus = EyeStatus.OPEN;
 
     private final float[] accelerometerReading = new float[3];
     private final float[] magnetometerReading = new float[3];
@@ -45,6 +47,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private ImageView mEyelidLeft;
     private ImageView mEyelidRight;
 
+    private enum EyeStatus {OPEN, CLOSED, CLOSING, OPENING};
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -323,9 +326,9 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             }
 
             //TODO: Animate eye closing
-            if (event.values[0] < 100){
+            if (event.values[0] < 100 && (eyeStatus != EyeStatus.CLOSING) ){
                 closeEyes();
-            } else {
+            } else if (event.values[0] > 1000 && (eyeStatus != EyeStatus.OPENING)) {
                 openEyes();
             }
 
@@ -410,9 +413,18 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private void closeEyes(){
 
         //TODO: Close eyes based on time
+        eyeStatus = EyeStatus.CLOSING;
+        mEyelidLeft.setImageResource(R.drawable.eyesclose);
+        mEyelidRight.setImageResource(R.drawable.eyesclose);
+        AnimationDrawable eyeCloseLeft = (AnimationDrawable) mEyelidLeft.getDrawable();
+        AnimationDrawable eyeCloseRight = (AnimationDrawable) mEyelidRight.getDrawable();
+        eyeCloseLeft.start();
+        eyeCloseRight.start();
 
-        mEyelidLeft.setImageResource(R.drawable.eyelid_07);
-        mEyelidRight.setImageResource(R.drawable.eyelid_07);
+
+
+        //mEyelidLeft.setImageResource(R.drawable.eyelid07);
+        //mEyelidRight.setImageResource(R.drawable.eyelid07);
 
 
     }
@@ -424,9 +436,18 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         //TODO: open eyes based on time
 
-        mEyelidLeft.setImageResource(R.drawable.eyelid_00);
-        mEyelidRight.setImageResource(R.drawable.eyelid_00);
 
+
+        eyeStatus = EyeStatus.OPENING;
+        mEyelidLeft.setImageResource(R.drawable.eyesopen);
+        mEyelidRight.setImageResource(R.drawable.eyesopen);
+        AnimationDrawable eyeOpenLeft = (AnimationDrawable) mEyelidLeft.getDrawable();
+        AnimationDrawable eyeOpenRight = (AnimationDrawable) mEyelidRight.getDrawable();
+        eyeOpenLeft.start();
+        eyeOpenRight.start();
+
+        //mEyelidLeft.setImageResource(R.drawable.eyelid00);
+        //mEyelidRight.setImageResource(R.drawable.eyelid00);
 
     }
 
