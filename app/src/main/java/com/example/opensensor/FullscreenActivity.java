@@ -355,10 +355,9 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             }
 
             //TODO: Animate eye closing
-
             if (event.values[0] < 100 && (eyeStatus != EyeStatus.CLOSING) ){
                 closeEyes();
-            } else if (event.values[0] > 1000 && (eyeStatus != EyeStatus.OPENING)) {
+            } else if (event.values[0] > 300 && (eyeStatus != EyeStatus.OPENING)) {
                 openEyes();
             }
 
@@ -441,8 +440,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      * Closes the eyes
      */
     private void closeEyes(){
-
-        //TODO: Close eyes based on time
+        
         eyeStatus = EyeStatus.CLOSING;
         mEyelidLeft.setImageResource(R.drawable.eyesclose);
         mEyelidRight.setImageResource(R.drawable.eyesclose);
@@ -464,10 +462,6 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      * Opens the eyes
      */
     private void openEyes(){
-
-        //TODO: open eyes based on time
-
-
 
         eyeStatus = EyeStatus.OPENING;
         mEyelidLeft.setImageResource(R.drawable.eyesopen);
