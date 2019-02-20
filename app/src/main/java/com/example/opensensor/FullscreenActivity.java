@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.hardware.Sensor;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.util.DisplayMetrics;
 import android.widget.FrameLayout;
+
+import java.util.Random;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -28,6 +31,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      */
     public static boolean DEBUG = true;
     public static double PI = 3.1415926;
+    public static boolean eyeOpen = true;
     private TextView mDebugText;
     private TextView mDebugLight;
     private SensorManager sManager;
@@ -103,6 +107,28 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             hide();
         }
     };
+
+    /**
+     * Thread to control the random blinking of the eyes.
+     */
+    Runnable runnable = new Runnable() {
+        Random r = new Random();
+        @Override
+        public void run() {
+            while (true) {
+                blink();
+                int nextBlink = r.nextInt(((10)+1)*1000);
+                try {
+                    Thread.sleep(nextBlink);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    };
+    Thread thread = new Thread(runnable);
+
     /**
      * Touch listener to use for in-layout UI controls to delay hiding the
      * system UI. This is to prevent the jarring behavior of controls going away
@@ -174,6 +200,9 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        //start the blinking thread after initialization.
+        thread.start();
     }
 
     @Override
@@ -326,6 +355,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             }
 
             //TODO: Animate eye closing
+
             if (event.values[0] < 100 && (eyeStatus != EyeStatus.CLOSING) ){
                 closeEyes();
             } else if (event.values[0] > 1000 && (eyeStatus != EyeStatus.OPENING)) {
@@ -421,6 +451,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         eyeCloseLeft.start();
         eyeCloseRight.start();
 
+        eyeOpen = false;
 
 
         //mEyelidLeft.setImageResource(R.drawable.eyelid07);
@@ -430,7 +461,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     }
 
     /**
-     * Closes the eyes
+     * Opens the eyes
      */
     private void openEyes(){
 
@@ -446,9 +477,20 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         eyeOpenLeft.start();
         eyeOpenRight.start();
 
+        eyeOpen = true;
+
         //mEyelidLeft.setImageResource(R.drawable.eyelid00);
         //mEyelidRight.setImageResource(R.drawable.eyelid00);
 
+
+    }
+
+
+    private void blink(){
+        if(eyeOpen) {
+            closeEyes();
+            openEyes();
+        }
     }
 
 }
