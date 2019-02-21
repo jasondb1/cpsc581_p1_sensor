@@ -115,15 +115,17 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         Random r = new Random();
         @Override
         public void run() {
-            while (true) {
-                blink();
+            while (Thread.interrupted()) {
+
                 int nextBlink = r.nextInt(((10)+1)*1000);
                 try {
                     Thread.sleep(nextBlink);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                blink();
             }
+
 
         }
     };
@@ -199,10 +201,8 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        //start the blinking thread after initialization.
-        thread.start();
     }
 
     @Override
@@ -282,6 +282,8 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         }
 
+        thread.start();
+
     }
 
     /**
@@ -293,6 +295,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         //unregister listener when app is paused
         sManager.unregisterListener(this);
+        thread.interrupt();
     }
 
     /**
@@ -354,7 +357,6 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
                 mDebugLight.setText("Light:" + Float.toString(event.values[0]));
             }
 
-            //TODO: Animate eye closing
             if (event.values[0] < 100 && (eyeStatus != EyeStatus.CLOSING) ){
                 closeEyes();
             } else if (event.values[0] > 300 && (eyeStatus != EyeStatus.OPENING)) {
@@ -450,12 +452,6 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         eyeCloseRight.start();
 
         eyeOpen = false;
-
-
-        //mEyelidLeft.setImageResource(R.drawable.eyelid07);
-        //mEyelidRight.setImageResource(R.drawable.eyelid07);
-
-
     }
 
     /**
@@ -472,10 +468,6 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         eyeOpenRight.start();
 
         eyeOpen = true;
-
-        //mEyelidLeft.setImageResource(R.drawable.eyelid00);
-        //mEyelidRight.setImageResource(R.drawable.eyelid00);
-
 
     }
 
