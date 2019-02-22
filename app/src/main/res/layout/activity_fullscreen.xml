@@ -41,24 +41,26 @@
         <FrameLayout
             android:id="@+id/pupils"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:translationX="15dp"
-            android:translationY="100dp">
+            android:translationY="200dp">
 
             <ImageView
                 android:id="@+id/PupilLeft"
                 android:layout_width="@android:dimen/thumbnail_height"
-                android:layout_height="88dp"
+                android:layout_height="90dp"
                 android:contentDescription="@string/pupilLeft"
+                android:translationY="0dp"
                 android:visibility="visible"
                 app:srcCompat="@drawable/pupil_00_white" />
 
             <ImageView
                 android:id="@+id/PupilRight"
                 android:layout_width="@android:dimen/thumbnail_height"
-                android:layout_height="88dp"
+                android:layout_height="90dp"
                 android:contentDescription="@string/pupilRight"
                 android:translationX="200dp"
+                android:translationY="0dp"
                 android:visibility="visible"
                 app:srcCompat="@drawable/pupil_00_white" />
         </FrameLayout>
@@ -68,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:translationX="15dp"
-            android:translationY="100dp">
+            android:translationY="200dp">
 
             <ImageView
                 android:id="@+id/EyelidLeft"
@@ -109,6 +111,27 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/hourText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="50sp"
+            android:translationX="0dp"
+            android:translationY="20dp" />
+
+        <TextView
+            android:id="@+id/dayText"
+            android:layout_width="match_parent"
+            android:layout_height="113dp"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="25sp"
+            android:translationX="0dp"
+            android:translationY="80dp" />
 
 
     </FrameLayout>

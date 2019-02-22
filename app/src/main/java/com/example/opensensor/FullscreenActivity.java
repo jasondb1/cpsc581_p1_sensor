@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.DateUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.hardware.Sensor;
@@ -31,7 +32,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      */
     public static int eyeStyleFlag = 0;     // flag for changing the eye styles
     private static final int eyeStyleNum = 4;      // total number of eye styles
-    private static final int SHAKE_THRESHOLD = 600;
+    private static final int SHAKE_THRESHOLD = 500;
     private static final int SHAKE_TIME_ELAPSE = 300;
     private static long previousTime;
     private static float x,y,z,x1,y1,z1;
@@ -42,6 +43,8 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     public static boolean eyeOpen = true;
     private TextView mDebugText;
     private TextView mDebugLight;
+    private TextView hourText;
+    private TextView  dayText;
     private SensorManager sManager;
     private Sensor mGyro;
     private Sensor mAccelerometer;
@@ -180,6 +183,11 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             //mDebugLight = (TextView) findViewById(R.id.debug_light);
             mDebugLight.setText("Running...");
         }
+
+        hourText = (TextView) findViewById(R.id.hourText);
+        hourText.setText(DateUtils.formatDateTime(getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME));
+        dayText = (TextView) findViewById(R.id.dayText);
+        dayText.setText(DateUtils.formatDateTime(getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_DATE));
 
         //bind Pupils and eyelids
         mPupils = (FrameLayout) findViewById(R.id.pupils);
@@ -489,7 +497,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         float MOVE_H_FACTOR = 65.0f; //multiply the angle by this factor so pupil movement = roll * MOVE_FACTOR - This affects how far the eye moves horizontally
         float MOVE_V_FACTOR = 11.0f; //multiply the angle by this factor so pupil movement = roll * MOVE_FACTOR - This affects how far the eye moves vertically
         int offsetX = 5;    //Default Horizontal position of eyes without any movement
-        int offsetY = 95;  //Default Vertical position of eyes without any movement
+        int offsetY = 195;  //Default Vertical position of eyes without any movement
         float offsetAngleY = (float) (PI / 3); //in Radians - Used to adjust the angle at which the eyes are centered vertically
 
         float amount = 0.0f;
