@@ -30,33 +30,11 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      * class attributes
      */
     public static int eyeStyleFlag = 0;     // flag for changing the eye styles
-    public static int eyeStyleNum = 4;      // total number of eye styles
-
-    /**
-     * TODO: implement swipe listener
-     */
-//    float x1, x2, y1, y2;
-//
-//    @Override
-//    public boolean onTouchEvent(MotionEvent touchEvent){
-//        switch (touchEvent.getAction()){
-//            case MotionEvent.ACTION_DOWN:
-//                x1 = touchEvent.getX();
-//                y1 = touchEvent.getY();
-//                break;
-//            case MotionEvent.ACTION_UP:
-//                x2 = touchEvent.getX();
-//                y2 = touchEvent.getY();
-//                System.out.println("!!!!!" + (x2-x1));
-//                if(x1 + 50 < x2){   //swipe right
-//                    eyeStyleFlag = (eyeStyleFlag + 1)%eyeStyleNum;
-//                }else if(x2 + 50 < x1){
-//                    eyeStyleFlag = (eyeStyleFlag - 1)%eyeStyleNum;
-//                }
-//                break;
-//        }
-//        return false;
-//    }
+    private static final int eyeStyleNum = 4;      // total number of eye styles
+    private static final int SHAKE_THRESHOLD = 600;
+    private static final int SHAKE_TIME_ELAPSE = 300;
+    private static long previousTime;
+    private static float x,y,z,x1,y1,z1;
 
     public static boolean DEBUG = false;
     public static double PI = 3.1415926;
@@ -231,48 +209,6 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         });
 
 
-        final Button dummybtn = findViewById(R.id.button);
-        dummybtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                eyeStyleFlag = (eyeStyleFlag + 1)%eyeStyleNum;
-                ImageView PupilLeft = (ImageView) findViewById(R.id.PupilLeft);
-                ImageView PupilRight = (ImageView) findViewById(R.id.PupilRight);
-                ImageView EyelidLeft = (ImageView) findViewById(R.id.EyelidLeft);
-                ImageView EyelidRight = (ImageView) findViewById(R.id.EyelidRight);
-                dummybtn.setText("flag: " + eyeStyleFlag);
-                switch(eyeStyleFlag){
-                    case 0:
-                        PupilLeft.setImageResource(R.drawable.pupil_00_white);
-                        PupilRight.setImageResource(R.drawable.pupil_00_white);
-                        EyelidLeft.setImageResource((R.drawable.eyelid00));
-                        EyelidRight.setImageResource((R.drawable.eyelid00));
-                        break;
-                    case 1:
-                        PupilLeft.setImageResource(R.drawable.pupil1left);
-                        PupilRight.setImageResource(R.drawable.pupil1left);
-                        EyelidLeft.setImageResource((R.drawable.eyelid10));
-                        EyelidRight.setImageResource((R.drawable.eyelid10r));
-                        break;
-                    case 2:
-                        PupilLeft.setImageResource(R.drawable.pupil2left);
-                        PupilRight.setImageResource(R.drawable.pupil2left);
-                        EyelidLeft.setImageResource((R.drawable.eyelid10));
-                        EyelidRight.setImageResource((R.drawable.eyelid10r));
-                        break;
-                    case 3:
-                        PupilLeft.setImageResource(R.drawable.pupil3left);
-                        PupilRight.setImageResource(R.drawable.pupil3left);
-                        EyelidLeft.setImageResource((R.drawable.eyelid10));
-                        EyelidRight.setImageResource((R.drawable.eyelid10r));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-
-
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
@@ -401,6 +337,31 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             //    return;
             //}
 
+            /*  Detect phone shaking
+            *   Change SHAKE_THRESHOLD to adjust the sensitivity
+            * */
+            long currentTime = System.currentTimeMillis();
+            if ((currentTime - previousTime) > SHAKE_TIME_ELAPSE) {   // update every 100 ms
+                long diffTime = (currentTime - previousTime);
+                previousTime = currentTime;
+
+                x = event.values[0];
+                y = event.values[1];
+                z = event.values[2];
+
+                float speed = Math.abs(x+y+z - x1-y1-z1)/diffTime * 10000;
+
+                if(speed > SHAKE_THRESHOLD){ // || speed < -SHAKE_THRESHOLD) {
+                    changeEyeStyle();
+                }
+
+                x1 = x;
+                y1 = y;
+                z1 = z;
+
+            }
+
+
             System.arraycopy(event.values, 0, accelerometerReading,
                     0, accelerometerReading.length);
 
@@ -472,6 +433,44 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    private void changeEyeStyle(){
+        eyeStyleFlag = (eyeStyleFlag + 1)%eyeStyleNum;
+        ImageView PupilLeft = (ImageView) findViewById(R.id.PupilLeft);
+        ImageView PupilRight = (ImageView) findViewById(R.id.PupilRight);
+        ImageView EyelidLeft = (ImageView) findViewById(R.id.EyelidLeft);
+        ImageView EyelidRight = (ImageView) findViewById(R.id.EyelidRight);
+//        final Button dummybtn = findViewById(R.id.button);
+//        dummybtn.setText("flag: " + eyeStyleFlag);
+        switch(eyeStyleFlag){
+            case 0:
+                PupilLeft.setImageResource(R.drawable.pupil_00_white);
+                PupilRight.setImageResource(R.drawable.pupil_00_white);
+                EyelidLeft.setImageResource((R.drawable.eyelid00));
+                EyelidRight.setImageResource((R.drawable.eyelid00));
+                break;
+            case 1:
+                PupilLeft.setImageResource(R.drawable.pupil1left);
+                PupilRight.setImageResource(R.drawable.pupil1left);
+                EyelidLeft.setImageResource((R.drawable.eyelid10));
+                EyelidRight.setImageResource((R.drawable.eyelid10r));
+                break;
+            case 2:
+                PupilLeft.setImageResource(R.drawable.pupil2left);
+                PupilRight.setImageResource(R.drawable.pupil2left);
+                EyelidLeft.setImageResource((R.drawable.eyelid10));
+                EyelidRight.setImageResource((R.drawable.eyelid10r));
+                break;
+            case 3:
+                PupilLeft.setImageResource(R.drawable.pupil3left);
+                PupilRight.setImageResource(R.drawable.pupil3left);
+                EyelidLeft.setImageResource((R.drawable.eyelid10));
+                EyelidRight.setImageResource((R.drawable.eyelid10r));
+                break;
+            default:
+                break;
+        }
     }
 
     /**
