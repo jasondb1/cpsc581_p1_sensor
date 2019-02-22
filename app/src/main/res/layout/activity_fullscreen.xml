@@ -24,10 +24,6 @@
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -51,9 +47,10 @@
 
             <ImageView
                 android:id="@+id/PupilLeft"
-                android:layout_width="190dp"
+                android:layout_width="@android:dimen/thumbnail_height"
                 android:layout_height="88dp"
                 android:contentDescription="@string/pupilLeft"
+                android:visibility="visible"
                 app:srcCompat="@drawable/pupil_00_white" />
 
             <ImageView
@@ -111,6 +108,12 @@
                 android:text="@string/dummy_button" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
 
 
     </FrameLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list android:oneshot="true" xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/eyelid10r" android:duration="50" />
+    <item android:drawable="@drawable/eyelid11r" android:duration="50" />
+    <item android:drawable="@drawable/eyelid12r" android:duration="50" />
+    <item android:drawable="@drawable/eyelid13r" android:duration="50" />
+    <item android:drawable="@drawable/eyelid14r" android:duration="50" />
+    <item android:drawable="@drawable/eyelid15r" android:duration="50" />
+    <item android:drawable="@drawable/eyelid16r" android:duration="50" />
+    <item android:drawable="@drawable/eyelid17r" android:duration="50" />
+</animation-list>

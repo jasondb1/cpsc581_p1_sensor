@@ -6,13 +6,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.util.DisplayMetrics;
@@ -24,11 +24,40 @@ import java.util.Random;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenActivity extends AppCompatActivity implements SensorEventListener {
+public class FullscreenActivity extends AppCompatActivity implements SensorEventListener{
 
     /**
      * class attributes
      */
+    public static int eyeStyleFlag = 0;     // flag for changing the eye styles
+    public static int eyeStyleNum = 4;      // total number of eye styles
+
+    /**
+     * TODO: implement swipe listener
+     */
+//    float x1, x2, y1, y2;
+//
+//    @Override
+//    public boolean onTouchEvent(MotionEvent touchEvent){
+//        switch (touchEvent.getAction()){
+//            case MotionEvent.ACTION_DOWN:
+//                x1 = touchEvent.getX();
+//                y1 = touchEvent.getY();
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                x2 = touchEvent.getX();
+//                y2 = touchEvent.getY();
+//                System.out.println("!!!!!" + (x2-x1));
+//                if(x1 + 50 < x2){   //swipe right
+//                    eyeStyleFlag = (eyeStyleFlag + 1)%eyeStyleNum;
+//                }else if(x2 + 50 < x1){
+//                    eyeStyleFlag = (eyeStyleFlag - 1)%eyeStyleNum;
+//                }
+//                break;
+//        }
+//        return false;
+//    }
+
     public static boolean DEBUG = false;
     public static double PI = 3.1415926;
     public static long DELAY = 1500;        //1500 ms for eyes closed
@@ -201,10 +230,53 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             }
         });
 
+
+        final Button dummybtn = findViewById(R.id.button);
+        dummybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eyeStyleFlag = (eyeStyleFlag + 1)%eyeStyleNum;
+                ImageView PupilLeft = (ImageView) findViewById(R.id.PupilLeft);
+                ImageView PupilRight = (ImageView) findViewById(R.id.PupilRight);
+                ImageView EyelidLeft = (ImageView) findViewById(R.id.EyelidLeft);
+                ImageView EyelidRight = (ImageView) findViewById(R.id.EyelidRight);
+                dummybtn.setText("flag: " + eyeStyleFlag);
+                switch(eyeStyleFlag){
+                    case 0:
+                        PupilLeft.setImageResource(R.drawable.pupil_00_white);
+                        PupilRight.setImageResource(R.drawable.pupil_00_white);
+                        EyelidLeft.setImageResource((R.drawable.eyelid00));
+                        EyelidRight.setImageResource((R.drawable.eyelid00));
+                        break;
+                    case 1:
+                        PupilLeft.setImageResource(R.drawable.pupil1left);
+                        PupilRight.setImageResource(R.drawable.pupil1left);
+                        EyelidLeft.setImageResource((R.drawable.eyelid10));
+                        EyelidRight.setImageResource((R.drawable.eyelid10r));
+                        break;
+                    case 2:
+                        PupilLeft.setImageResource(R.drawable.pupil2left);
+                        PupilRight.setImageResource(R.drawable.pupil2left);
+                        EyelidLeft.setImageResource((R.drawable.eyelid10));
+                        EyelidRight.setImageResource((R.drawable.eyelid10r));
+                        break;
+                    case 3:
+                        PupilLeft.setImageResource(R.drawable.pupil3left);
+                        PupilRight.setImageResource(R.drawable.pupil3left);
+                        EyelidLeft.setImageResource((R.drawable.eyelid10));
+                        EyelidRight.setImageResource((R.drawable.eyelid10r));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+//        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
         thread.start();
     }
 
@@ -468,8 +540,23 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         }
 
         eyeStatus = EyeStatus.CLOSING;
-        mEyelidLeft.setImageResource(R.drawable.eyesclose);
-        mEyelidRight.setImageResource(R.drawable.eyesclose);
+        switch (eyeStyleFlag) {
+            case 0:
+                mEyelidLeft.setImageResource(R.drawable.eyesclose);
+                mEyelidRight.setImageResource(R.drawable.eyesclose);
+                break;
+            case 1:
+                mEyelidLeft.setImageResource(R.drawable.eyesclose1left);
+                mEyelidRight.setImageResource(R.drawable.eyesclose1right);
+            case 2:
+                mEyelidLeft.setImageResource(R.drawable.eyesclose1left);
+                mEyelidRight.setImageResource(R.drawable.eyesclose1right);
+            case 3:
+                mEyelidLeft.setImageResource(R.drawable.eyesclose1left);
+                mEyelidRight.setImageResource(R.drawable.eyesclose1right);
+                break;
+            default: break;
+        }
         AnimationDrawable eyeCloseLeft = (AnimationDrawable) mEyelidLeft.getDrawable();
         AnimationDrawable eyeCloseRight = (AnimationDrawable) mEyelidRight.getDrawable();
         eyeCloseLeft.start();
@@ -484,8 +571,23 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private void openEyes(){
 
         eyeStatus = EyeStatus.OPENING;
-        mEyelidLeft.setImageResource(R.drawable.eyesopen);
-        mEyelidRight.setImageResource(R.drawable.eyesopen);
+        switch (eyeStyleFlag) {
+            case 0:
+                mEyelidLeft.setImageResource(R.drawable.eyesopen);
+                mEyelidRight.setImageResource(R.drawable.eyesopen);
+                break;
+            case 1:
+                mEyelidLeft.setImageResource(R.drawable.eyesopen1left);
+                mEyelidRight.setImageResource(R.drawable.eyesopen1right);
+            case 2:
+                mEyelidLeft.setImageResource(R.drawable.eyesopen1left);
+                mEyelidRight.setImageResource(R.drawable.eyesopen1right);
+            case 3:
+                mEyelidLeft.setImageResource(R.drawable.eyesopen1left);
+                mEyelidRight.setImageResource(R.drawable.eyesopen1right);
+                break;
+            default: break;
+        }
         AnimationDrawable eyeOpenLeft = (AnimationDrawable) mEyelidLeft.getDrawable();
         AnimationDrawable eyeOpenRight = (AnimationDrawable) mEyelidRight.getDrawable();
         eyeOpenLeft.start();
