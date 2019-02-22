@@ -31,6 +31,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      */
     public static boolean DEBUG = false;
     public static double PI = 3.1415926;
+    public static long DELAY = 1500;        //1500 ms for eyes closed
     public static boolean eyeOpen = true;
     private TextView mDebugText;
     private TextView mDebugLight;
@@ -40,6 +41,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private Sensor mMagneticField;
     private Sensor mLight;
     private EyeStatus eyeStatus = EyeStatus.OPEN;
+    private int sequence;
 
     private final float[] accelerometerReading = new float[3];
     private final float[] magnetometerReading = new float[3];
@@ -52,6 +54,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
     private ImageView mEyelidRight;
 
     private enum EyeStatus {OPEN, CLOSED, CLOSING, OPENING};
+    long timestampEyesClosed;
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -202,7 +205,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-
+        thread.start();
     }
 
     @Override
@@ -282,7 +285,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         }
 
-        thread.start();
+        //thread.start();
 
     }
 
@@ -295,7 +298,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         //unregister listener when app is paused
         sManager.unregisterListener(this);
-        thread.interrupt();
+        //thread.interrupt();
     }
 
     /**
@@ -304,6 +307,17 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      */
     @Override
     public void onSensorChanged(SensorEvent event) {
+
+        //test for eyes shut
+        long timestampCurrent = System.currentTimeMillis();
+
+        if ( sequence == 2 &&
+                eyeStatus == EyeStatus.CLOSING &&
+                (timestampCurrent - timestampEyesClosed) > DELAY ){
+            finish();
+            System.exit(0);
+
+        }
 
         if (event.sensor == mAccelerometer) {
 
@@ -413,9 +427,15 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         //Move eyes horizontally
         if (orientationAngles[2] < LEFTBOUND) {
             amount = (float) (offsetX + (MOVE_H_FACTOR * LEFTBOUND));
+            if(sequence == 1){
+                sequence = 2;
+            }
+
 
         } else if (orientationAngles[2] > RIGHTBOUND) {
             amount = (float) (offsetX + (MOVE_H_FACTOR * RIGHTBOUND));
+            sequence = 1; //reset sequence
+
         } else {
             amount = (MOVE_H_FACTOR * orientationAngles[2]) + offsetX;
         }
@@ -442,7 +462,11 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      * Closes the eyes
      */
     private void closeEyes(){
-        
+
+        if(eyeStatus != EyeStatus.CLOSING) {
+            timestampEyesClosed = System.currentTimeMillis();
+        }
+
         eyeStatus = EyeStatus.CLOSING;
         mEyelidLeft.setImageResource(R.drawable.eyesclose);
         mEyelidRight.setImageResource(R.drawable.eyesclose);
