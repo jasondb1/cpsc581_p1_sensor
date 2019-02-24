@@ -128,9 +128,9 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         Random r = new Random();
         @Override
         public void run() {
-            while (Thread.interrupted()) {
+            while (!thread.isInterrupted()) {
 
-                int nextBlink = r.nextInt(((10)+1)*1000);
+                int nextBlink = r.nextInt(((7)+1)*1000);
                 try {
                     Thread.sleep(nextBlink);
                 } catch (InterruptedException e) {
@@ -221,7 +221,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
 //        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-        thread.start();
+        //thread.start();
     }
 
     @Override
@@ -301,7 +301,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         }
 
-        //thread.start();
+        thread.start();
 
     }
 
@@ -314,7 +314,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
 
         //unregister listener when app is paused
         sManager.unregisterListener(this);
-        //thread.interrupt();
+        thread.interrupt();
     }
 
     /**
