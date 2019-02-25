@@ -32,10 +32,11 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
      */
     public static int eyeStyleFlag = 0;     // flag for changing the eye styles
     private static final int eyeStyleNum = 4;      // total number of eye styles
-    private static final int SHAKE_THRESHOLD = 500;
-    private static final int SHAKE_TIME_ELAPSE = 300;
+    private static final int SHAKE_THRESHOLD = 600;
+    private static final int SHAKE_TIME_ELAPSE = 200;
     private static long previousTime;
-    private static float x,y,z,x1,y1,z1;
+    private static float x1,y1,z1;
+    private static int shakeInitFlag = 0;
 
     public static boolean DEBUG = false;
     public static double PI = 3.1415926;
@@ -349,18 +350,23 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             *   Change SHAKE_THRESHOLD to adjust the sensitivity
             * */
             long currentTime = System.currentTimeMillis();
-            if ((currentTime - previousTime) > SHAKE_TIME_ELAPSE) {   // update every 100 ms
-                long diffTime = (currentTime - previousTime);
+            long diffTime = (currentTime - previousTime);
+            if (diffTime > SHAKE_TIME_ELAPSE) {   // update every 100 ms
                 previousTime = currentTime;
 
-                x = event.values[0];
-                y = event.values[1];
-                z = event.values[2];
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
 
-                float speed = Math.abs(x+y+z - x1-y1-z1)/diffTime * 10000;
+                if(shakeInitFlag == 0){
+                    shakeInitFlag = 1;
+                }else {
+                    double speed = Math.abs(x+y+z - x1-y1-z1)/diffTime * 10000;
 
-                if(speed > SHAKE_THRESHOLD){ // || speed < -SHAKE_THRESHOLD) {
-                    changeEyeStyle();
+                    if(speed > SHAKE_THRESHOLD){ // || speed < -SHAKE_THRESHOLD) {
+                        changeEyeStyle();
+                        shakeInitFlag = 0;
+                    }
                 }
 
                 x1 = x;
@@ -449,8 +455,7 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
         ImageView PupilRight = (ImageView) findViewById(R.id.PupilRight);
         ImageView EyelidLeft = (ImageView) findViewById(R.id.EyelidLeft);
         ImageView EyelidRight = (ImageView) findViewById(R.id.EyelidRight);
-//        final Button dummybtn = findViewById(R.id.button);
-//        dummybtn.setText("flag: " + eyeStyleFlag);
+
         switch(eyeStyleFlag){
             case 0:
                 PupilLeft.setImageResource(R.drawable.pupil_00_white);
@@ -555,9 +560,11 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             case 1:
                 mEyelidLeft.setImageResource(R.drawable.eyesclose1left);
                 mEyelidRight.setImageResource(R.drawable.eyesclose1right);
+                break;
             case 2:
                 mEyelidLeft.setImageResource(R.drawable.eyesclose1left);
                 mEyelidRight.setImageResource(R.drawable.eyesclose1right);
+                break;
             case 3:
                 mEyelidLeft.setImageResource(R.drawable.eyesclose1left);
                 mEyelidRight.setImageResource(R.drawable.eyesclose1right);
@@ -586,9 +593,11 @@ public class FullscreenActivity extends AppCompatActivity implements SensorEvent
             case 1:
                 mEyelidLeft.setImageResource(R.drawable.eyesopen1left);
                 mEyelidRight.setImageResource(R.drawable.eyesopen1right);
+                break;
             case 2:
                 mEyelidLeft.setImageResource(R.drawable.eyesopen1left);
                 mEyelidRight.setImageResource(R.drawable.eyesopen1right);
+                break;
             case 3:
                 mEyelidLeft.setImageResource(R.drawable.eyesopen1left);
                 mEyelidRight.setImageResource(R.drawable.eyesopen1right);
